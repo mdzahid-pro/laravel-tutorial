@@ -13,22 +13,28 @@ class RequestController extends Controller
     }
 
     public function handle(Request $request){
-//        dd($request->string("string_input")->trim()->upper()->value());
-//        dd($request->boolean("boolean_input"));
-//        dd($request->date("date_input")->format("Y-m-d"));
-//        dd($request->float("numeric_input"));
-//        dd($request->enum("enum_input", RequestEnum::class));
+        // file validation
+        $data = $request->validate([
+            "photo" => "mimes:png,jpg"
+        ]);
 
-//        dd($request->has("has_input_two"));
-//        dd($request->hasAny("has_input_two","has_input"));
-//        $request->whenHas("has_input_two",function (){
-//            dd("Has Input Method Found");
-//        }, function (){
-//            dd("Has input method not found");
-//        });
+        $allowedExtension = ["png", "jpg"];
 
-//        dd($request->missing("has_input"));
+        if(in_array($data["photo"]->extension(), $allowedExtension)){
+            $filename = "zahid.png";
+            $data["photo"]->storeAs("photos", $filename);
+            $data["photo"]->store("photos");
+        }
 
-//        dd($request->filled("string_input"));
+
+        dd($request->file("photo")->extension());
+
+        dd($request->file("photo")->path());
+        dd($request->file("photo")->isValid());
+        dd($request->hasFile("photo"));
+        dd($request->file("photo")->getClientOriginalExtension());
+        dd($request->file("photo")->getClientOriginalName());
+        dd($_FILES['photo']['tmp_name']);
+//        $request->file("photo")->getMimeType()
     }
 }
